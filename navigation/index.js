@@ -11,7 +11,6 @@ const RootStack = createStackNavigator(
         Home: {
             screen: Home,
             navigationOptions: (navigation) => {
-                console.log(navigation)
                 return {
                     header: <Header
                         rightComponent={{ icon: 'add', component: TouchableOpacity, color: '#fff', onPress: () => navigation.navigation.navigate('AddPath') }}
@@ -33,23 +32,7 @@ const RootStack = createStackNavigator(
         },
     },
     {
-        initialRouteName: "Home",
-        //   navigationOptions: {
-        //     headerTitleStyle: [
-        //       globalStyles.fontRegular,
-        //       globalStyles.fontSemibold,
-        //       {
-        //         color: colors.white,
-        //         fontSize: 17,
-        //         textAlign: "center",
-        //         justifyContent: "center",
-        //         flex: 1
-        //       }
-        //     ],
-        //     headerTityleContainerStyle: {
-        //       alignItems: "center"
-        //     }
-        //   }
+        initialRouteName: "Home"
     }
 );
 
