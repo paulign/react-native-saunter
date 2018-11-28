@@ -1,5 +1,4 @@
 import firebase from '../firebaseConfig';
-import { push } from 'connected-react-router';
 import {
     EDIT_PATH,
     EDIT_PATH_SUCCESS,
@@ -31,7 +30,6 @@ export const removePath = (path) => async dispatch => {
         if (path && path.id) {
             const ref = firebase.database().ref(`walking_paths/${path.id}`);
             await ref.remove();
-            dispatch(push('/'));
         }
         dispatch({ type: REMOVE_PATH_SUCCESS });
 

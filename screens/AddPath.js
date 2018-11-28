@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
-import { View, Text, Keyboard, KeyboardAvoidingView } from 'react-native';
-import { FormInput, FormLabel } from 'react-native-elements';
+import { View, Keyboard } from 'react-native';
+import { FormInput, FormLabel, Button, Icon, Text } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { reduxForm, Field } from 'redux-form';
+import { connect } from 'react-redux';
+import { addMapMarker } from '../actions';
+import geolib from 'geolib';
+import MapElement from '../components/MapElement';
 
-class Home extends Component {
+class AddPath extends Component {
     constructor(props) {
         super(props);
 
@@ -41,6 +45,52 @@ class Home extends Component {
         });
     };
 
+    onAddMarker = (latLng) => {
+        const path = [].concat(this.props.path);
+        path.push(latLng);
+        this.updatePath(path);
+        this.setState({ addingMarker: false });
+    }
+
+    onMarkerDrag = (index, e) => {
+        const { coordinate } = e;
+        console.log(index, e);
+        const path = [].concat(this.props.path);
+        path[index] = { lat: coordinate.latitude, lng: coordinate.longitude };
+        this.updatePath(path);
+        this.setState({ draggingMarker: false });
+    }
+
+    getDistance = () => {
+        const { distance } = this.props;
+        let valueType = distance > 1000 ? 'km' : 'm';
+        let displayValue = distance > 1000 ? (distance / 1000).toFixed(2) : distance;
+
+        return `${displayValue} ${valueType}`
+    }
+
+    updatePath = (path) => {
+        const distance = geolib.getPathLength(path);
+        this.props.addMapMarker({ path, distance });
+    }
+
+    onMapPress = (e) => {
+        const { addingMarker } = this.state;
+        const { coordinate } = e;
+
+        if (addingMarker) {
+            this.onAddMarker({ lat: coordinate.latitude, lng: coordinate.longitude });
+        }
+    }
+
+    getDistance = () => {
+        const { distance } = this.props;
+        let valueType = distance > 1000 ? 'km' : 'm';
+        let displayValue = distance > 1000 ? (distance / 1000).toFixed(2) : distance;
+
+        return `${displayValue} ${valueType}`
+    }
+
     renderField = ({ input, label, meta, inputProps = {} }) => {
         console.log(input, label, inputProps);
         return (
@@ -65,16 +115,44 @@ class Home extends Component {
     }
 
     render() {
+        const { path } = this.props;
+        const { draggingMarker, keyboardVisible, keyboardAvoidingViewKey, addingMarker } = this.state;
+        console.log(draggingMarker);
         return (
-            <KeyboardAwareScrollView key={ this.state.keyboardAvoidingViewKey} enableOnAndroid={true} contentContainerStyle={{paddingBottom: 20}} >
-                {!this.state.keyboardVisible &&  <View style={{ height: 300, backgroundColor: '#ccc' }} />}
+            <KeyboardAwareScrollView scrollEnabled={!this.setState.draggingMarker} key={keyboardAvoidingViewKey} keyboardShouldPersistTaps={'always'} enableOnAndroid={true} contentContainerStyle={{ paddingBottom: 20 }} >
+                <MapElement
+                    editable
+                    style={{ height: !keyboardVisible ? 300 : 100, backgroundColor: '#ccc' }}
+                    onMarkerDragStart={() => this.setState({ draggingMarker: true })}
+                    onMarkerDragEnd={this.onMarkerDrag}
+                    markers={path}
+                    onMapPress={this.onMapPress}
+                    draggingMarker={draggingMarker}
+
+                />
+                {!!path && !!path.length && (
+                    <Text style={{ paddingVertical: 5, paddingHorizontal: 15, color: "#4d4d4d" }}>Long press on Marker to start drag it</Text>
+                )}
+                <Icon name="map" />
+                <Text h4 style={{ textAlign: 'center', color: '#4d4d4d' }}> Length {this.getDistance()}</Text>
                 <Field name="title" inputProps={{ placeholder: 'Enter title...' }} component={this.renderField} label="Title" />
                 <Field name="short_description" inputProps={{ multiline: true, maxLength: 160, placeholder: 'Enter short description...' }} component={this.renderField} label="Short description" />
                 <Field name="full_description" inputProps={{ multiline: true, placeholder: 'Enter full description...' }} component={this.renderField} label="Full description" />
+                <View style={{ backgroundColor: 'transparent', position: "absolute", top: 10, alignSelf: 'center' }}><Button disabled={addingMarker} onPress={() => this.setState({ addingMarker: true })} containerViewStyle={{ backgroundColor: 'transparent' }} raised rounded backgroundColor="#2089dc" title="Add marker" /></View>
             </KeyboardAwareScrollView>
         )
     }
 }
 
-export default reduxForm({ form: 'newPath' })(Home);
-//export default Home
+const mapStateToProps = (state) => {
+    const path = state.form.newPath && state.form.newPath.values ? state.form.newPath.values.path : [];
+    const distance = state.form.newPath && state.form.newPath.values ? state.form.newPath.values.distance : 0;
+
+    return {
+        path: path || [],
+        distance: distance || 0,
+        isSubmitting: state.paths.isSubmitting
+    }
+}
+
+export default connect(mapStateToProps, { addMapMarker })(reduxForm({ form: 'newPath' })(AddPath));
