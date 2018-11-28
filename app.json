@@ -21,7 +21,20 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.react.native.saunter",
+      "buildNumber": "1.0.5",
+      "config": {
+        "googleMapsApiKey": ""
+      }
+    },
+    "android": {
+      "package": "com.react.native.saunter",
+      "versionCode": 3.0,
+      "config": {
+        "googleMaps": {
+          "apiKey": ""
+        }
+      }
     }
   }
 }
