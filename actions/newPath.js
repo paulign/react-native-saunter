@@ -19,6 +19,8 @@ export const createNewPath = (onSuccess = () => {}) => async (dispatch, getState
         const id = ref.key;
         path.id = id;
 
+        console.log(path);
+
         await ref.set(path);
 
         dispatch({ type: ADD_NEW_PATH_SUCCESS });

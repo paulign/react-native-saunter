@@ -4,9 +4,10 @@ import { FormInput, FormLabel, Button, Icon, Text } from 'react-native-elements'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { reduxForm, Field } from 'redux-form';
 import { connect } from 'react-redux';
-import { addMapMarker } from '../actions';
+import { addMapMarker, createNewPath } from '../actions';
 import geolib from 'geolib';
 import MapElement from '../components/MapElement';
+import Loading from '../components/Loading';
 
 class AddPath extends Component {
     constructor(props) {
@@ -54,7 +55,6 @@ class AddPath extends Component {
 
     onMarkerDrag = (index, e) => {
         const { coordinate } = e;
-        console.log(index, e);
         const path = [].concat(this.props.path);
         path[index] = { lat: coordinate.latitude, lng: coordinate.longitude };
         this.updatePath(path);
@@ -92,17 +92,14 @@ class AddPath extends Component {
     }
 
     renderField = ({ input, label, meta, inputProps = {} }) => {
-        console.log(input, label, inputProps);
         return (
             <View>
                 <FormLabel labelStyle={{ marginLeft: 15, marginRight: 15 }} >{label}</FormLabel>
                 <FormInput
-                    inputStyle={{ color: "#4d4d4d", maxHeight: 100, minHeight: 35, borderBottomWidth: 2, borderColor: '#cccccc', paddingBottom: 5 }}
+                    inputStyle={{ color: "#4d4d4d", maxHeight: 100, minHeight: 35, borderBottomWidth: 2, borderColor: meta.active ? '#2089dc' : '#cccccc', paddingBottom: 5 }}
                     containerStyle={{ justifyContent: 'flex-start' }}
                     onChangeText={input.onChange}
                     onBlur={(e) => {
-                        this.setState({ reviewFocused: false, keyboardVisible: false });
-                        Keyboard.dismiss();
                         input.onBlur(e);
                     }}
                     onFocus={input.onFocus}
@@ -117,29 +114,33 @@ class AddPath extends Component {
     render() {
         const { path } = this.props;
         const { draggingMarker, keyboardVisible, keyboardAvoidingViewKey, addingMarker } = this.state;
-        console.log(draggingMarker);
+        console.log(this.props);
         return (
-            <KeyboardAwareScrollView scrollEnabled={!this.setState.draggingMarker} key={keyboardAvoidingViewKey} keyboardShouldPersistTaps={'always'} enableOnAndroid={true} contentContainerStyle={{ paddingBottom: 20 }} >
-                <MapElement
-                    editable
-                    style={{ height: !keyboardVisible ? 300 : 100, backgroundColor: '#ccc' }}
-                    onMarkerDragStart={() => this.setState({ draggingMarker: true })}
-                    onMarkerDragEnd={this.onMarkerDrag}
-                    markers={path}
-                    onMapPress={this.onMapPress}
-                    draggingMarker={draggingMarker}
+            <View style={{ flex: 1 }}>
+                <KeyboardAwareScrollView scrollEnabled={!this.setState.draggingMarker} key={keyboardAvoidingViewKey} keyboardShouldPersistTaps={'always'} enableOnAndroid={true} contentContainerStyle={{ paddingBottom: 20 }} >
+                    <MapElement
+                        editable
+                        style={{ height: !keyboardVisible ? 300 : 100, backgroundColor: '#ccc' }}
+                        onMarkerDragStart={() => this.setState({ draggingMarker: true })}
+                        onMarkerDragEnd={this.onMarkerDrag}
+                        markers={path}
+                        onMapPress={this.onMapPress}
+                        draggingMarker={draggingMarker}
 
-                />
-                {!!path && !!path.length && (
-                    <Text style={{ paddingVertical: 5, paddingHorizontal: 15, color: "#4d4d4d" }}>Long press on Marker to start drag it</Text>
-                )}
-                <Icon name="map" />
-                <Text h4 style={{ textAlign: 'center', color: '#4d4d4d' }}> Length {this.getDistance()}</Text>
-                <Field name="title" inputProps={{ placeholder: 'Enter title...' }} component={this.renderField} label="Title" />
-                <Field name="short_description" inputProps={{ multiline: true, maxLength: 160, placeholder: 'Enter short description...' }} component={this.renderField} label="Short description" />
-                <Field name="full_description" inputProps={{ multiline: true, placeholder: 'Enter full description...' }} component={this.renderField} label="Full description" />
-                <View style={{ backgroundColor: 'transparent', position: "absolute", top: 10, alignSelf: 'center' }}><Button disabled={addingMarker} onPress={() => this.setState({ addingMarker: true })} containerViewStyle={{ backgroundColor: 'transparent' }} raised rounded backgroundColor="#2089dc" title="Add marker" /></View>
-            </KeyboardAwareScrollView>
+                    />
+                    {!!path && !!path.length && (
+                        <Text style={{ paddingVertical: 5, paddingHorizontal: 15, color: "#4d4d4d" }}>Long press on Marker to start drag it</Text>
+                    )}
+                    <Icon name="map" />
+                    <Text h4 style={{ textAlign: 'center', color: '#4d4d4d' }}> Length {this.getDistance()}</Text>
+                    <Field name="title" inputProps={{ placeholder: 'Enter title...' }} component={this.renderField} label="Title" />
+                    <Field name="short_description" inputProps={{ multiline: true, maxLength: 160, placeholder: 'Enter short description...' }} component={this.renderField} label="Short description" />
+                    <Field name="full_description" inputProps={{ multiline: true, placeholder: 'Enter full description...' }} component={this.renderField} label="Full description" />
+                    <Button disabled={!this.props.valid || !this.props.path.length} containerViewStyle={{ marginTop: 20 }} title="Submit" backgroundColor="#2089dc" onPress={() => this.props.createNewPath()} />
+                    <View style={{ backgroundColor: 'transparent', position: "absolute", top: 10, alignSelf: 'center' }}><Button disabled={addingMarker} onPress={() => this.setState({ addingMarker: true })} containerViewStyle={{ backgroundColor: 'transparent' }} raised rounded backgroundColor="#2089dc" title="Add marker" /></View>
+                </KeyboardAwareScrollView>
+                <Loading visible={this.props.isSubmitting} />
+            </View>
         )
     }
 }
@@ -155,4 +156,21 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, { addMapMarker })(reduxForm({ form: 'newPath' })(AddPath));
+const validate = values => {
+    const errors = {}
+    if (!values.title) {
+        errors.title = 'Required';
+    }
+
+    if (!values.short_description) {
+        errors.short_description = 'Required';
+    }
+
+    if (!values.full_description) {
+        errors.full_description = 'Required';
+    }
+
+    return errors;
+}
+
+export default connect(mapStateToProps, { addMapMarker, createNewPath })(reduxForm({ form: 'newPath', validate })(AddPath));
