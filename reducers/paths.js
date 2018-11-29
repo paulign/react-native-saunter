@@ -7,12 +7,14 @@ import {
   EDIT_PATH_ERROR,
   REMOVE_PATH,
   REMOVE_PATH_SUCCESS,
-  REMOVE_PATH_ERROR
+  REMOVE_PATH_ERROR,
+  ON_LOAD_ALL_PATHS
 } from '../actions/types';
 
 const INITIAL_STATE = {
   isSubmitting: false,
-  isUpdating: false
+  isUpdating: false,
+  pathsList: []
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -41,6 +43,11 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         isUpdating: false
+      }
+    case ON_LOAD_ALL_PATHS:
+      return {
+        ...state,
+        pathsList: action.payload
       }
     default:
       return state;

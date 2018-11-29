@@ -5,7 +5,8 @@ import {
     EDIT_PATH_ERROR,
     REMOVE_PATH,
     REMOVE_PATH_SUCCESS,
-    REMOVE_PATH_ERROR
+    REMOVE_PATH_ERROR,
+    ON_LOAD_ALL_PATHS
 } from './types';
 
 export const toggleFavoriteState = (path) => async (dispatch) => {
@@ -38,4 +39,9 @@ export const removePath = (path) => async dispatch => {
         dispatch({ type: REMOVE_PATH_ERROR });
 
     }
+}
+
+export const onLoadPaths = (list) => {
+    console.log(list);
+    return {type: ON_LOAD_ALL_PATHS, payload: list};
 }
