@@ -6,7 +6,8 @@ import {
     REMOVE_PATH,
     REMOVE_PATH_SUCCESS,
     REMOVE_PATH_ERROR,
-    ON_LOAD_ALL_PATHS
+    ON_LOAD_ALL_PATHS,
+    FILTER_PATHS_LIST
 } from './types';
 
 export const toggleFavoriteState = (path) => async (dispatch) => {
@@ -41,7 +42,25 @@ export const removePath = (path) => async dispatch => {
     }
 }
 
-export const onLoadPaths = (list) => {
+export const onLoadPaths = (list) => (dispatch, getState) => {
     console.log(list);
-    return {type: ON_LOAD_ALL_PATHS, payload: list};
+    const { filterQuery } = getState().paths;
+    dispatch({ type: ON_LOAD_ALL_PATHS, payload: list });
+    dispatch(onFilterList(filterQuery))
 }
+
+export const onFilterList = (filterQuery = '') => (dispatch, getState) => {
+    const { pathsList } = getState().paths;
+    let filteredList = filterQuery ? [] : null;
+    if (pathsList.length && filterQuery) {
+        filteredList = [].concat(pathsList).filter(path => {
+            return path.title.toLowerCase().search(filterQuery.toLowerCase()) !== -1 ||
+                path.full_description.toLowerCase().search(filterQuery.toLowerCase()) !== -1;
+        });
+    }
+    dispatch({
+        type: FILTER_PATHS_LIST, payload: {
+            filteredList, filterQuery
+        }
+    });
+} 

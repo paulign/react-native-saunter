@@ -8,13 +8,17 @@ import {
   REMOVE_PATH,
   REMOVE_PATH_SUCCESS,
   REMOVE_PATH_ERROR,
-  ON_LOAD_ALL_PATHS
+  ON_LOAD_ALL_PATHS,
+  FILTER_PATHS_LIST
 } from '../actions/types';
 
 const INITIAL_STATE = {
   isSubmitting: false,
   isUpdating: false,
-  pathsList: []
+  pathsList: [],
+  filterQuery: '',
+  filteredList: null,
+  filterQuery: ''
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -48,6 +52,11 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         pathsList: action.payload
+      }
+    case FILTER_PATHS_LIST:
+      return {
+        ...state,
+        ...action.payload
       }
     default:
       return state;
