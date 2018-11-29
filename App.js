@@ -3,9 +3,10 @@ import { StyleSheet } from 'react-native';
 import { applyMiddleware, compose, createStore } from 'redux';
 import thunk from "redux-thunk";
 import { Provider } from 'react-redux'
-import rootReducer from './reducers';
+import rootReducer from './src/reducers';
 import { YellowBox } from 'react-native';
 import _ from 'lodash';
+import AppContainer from './src/AppContainer';
 
 YellowBox.ignoreWarnings(['Setting a timer']);
 const _console = _.clone(console);
@@ -14,8 +15,6 @@ console.warn = message => {
     _console.warn(message);
   }
 };
-
-import AppContainer from './AppContainer';
 
 const store = createStore(
   rootReducer,
