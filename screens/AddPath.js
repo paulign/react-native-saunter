@@ -91,6 +91,11 @@ class AddPath extends Component {
         return `${displayValue} ${valueType}`
     }
 
+    onSubmit = () => {
+        const { navigation, createNewPath } = this.props;
+        createNewPath(navigation);
+    }
+
     renderField = ({ input, label, meta, inputProps = {} }) => {
         return (
             <View>
@@ -136,7 +141,7 @@ class AddPath extends Component {
                     <Field name="title" inputProps={{ placeholder: 'Enter title...' }} component={this.renderField} label="Title" />
                     <Field name="short_description" inputProps={{ multiline: true, maxLength: 160, placeholder: 'Enter short description...' }} component={this.renderField} label="Short description" />
                     <Field name="full_description" inputProps={{ multiline: true, placeholder: 'Enter full description...' }} component={this.renderField} label="Full description" />
-                    <Button disabled={!this.props.valid || !this.props.path.length} containerViewStyle={{ marginTop: 20 }} title="Submit" backgroundColor="#2089dc" onPress={() => this.props.createNewPath()} />
+                    <Button disabled={!this.props.valid || !this.props.path.length} containerViewStyle={{ marginTop: 20 }} title="Submit" backgroundColor="#2089dc" onPress={this.onSubmit} />
                     <View style={{ backgroundColor: 'transparent', position: "absolute", top: 10, alignSelf: 'center' }}><Button disabled={addingMarker} onPress={() => this.setState({ addingMarker: true })} containerViewStyle={{ backgroundColor: 'transparent' }} raised rounded backgroundColor="#2089dc" title="Add marker" /></View>
                 </KeyboardAwareScrollView>
                 <Loading visible={this.props.isSubmitting} />

@@ -6,12 +6,13 @@ import {
     ADD_NEW_PATH_ERROR
 } from './types';
 import { reset } from 'redux-form';
+import { StackActions, NavigationActions } from "react-navigation";
 
 export const addMapMarker = (payload) => {
     return { type: ADD_MAP_MARKER, payload }
 }
 
-export const createNewPath = (onSuccess = () => {}) => async (dispatch, getState) => {
+export const createNewPath = (navigation) => async (dispatch, getState) => {
     try {
         dispatch({ type: ADD_NEW_PATH });
         const path = getState().form.newPath.values;
@@ -19,13 +20,26 @@ export const createNewPath = (onSuccess = () => {}) => async (dispatch, getState
         const id = ref.key;
         path.id = id;
 
-        console.log(path);
-
         await ref.set(path);
 
         dispatch({ type: ADD_NEW_PATH_SUCCESS });
-        onSuccess();
         dispatch(reset('newPath'));
+
+        const resetAction = StackActions.reset({
+            index: 1,
+            actions: [
+                NavigationActions.navigate({
+                    routeName: "Home"
+                }),
+                NavigationActions.navigate({
+                    routeName: "PathDetails",
+                    params: {
+                        id
+                    }
+                })
+            ]
+        });
+        navigation.dispatch(resetAction);
     } catch (error) {
         console.log(error);
         dispatch({ type: ADD_NEW_PATH_ERROR });
