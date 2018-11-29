@@ -25,7 +25,7 @@ export const toggleFavoriteState = (path) => async (dispatch) => {
     }
 }
 
-export const removePath = (path) => async dispatch => {
+export const removePath = (path, navigation) => async dispatch => {
     try {
         dispatch({ type: REMOVE_PATH });
 
@@ -34,6 +34,7 @@ export const removePath = (path) => async dispatch => {
             await ref.remove();
         }
         dispatch({ type: REMOVE_PATH_SUCCESS });
+        navigation.goBack();
 
     } catch (error) {
         console.log(error);

@@ -26,14 +26,23 @@ class Home extends Component {
         this.activeSearch = setTimeout(callback, 1000);
     }
 
+    onItemPress = (id) => {
+        this.props.navigation.navigate({
+            routeName: 'PathDetails', params: {
+                id
+            }
+        });
+    }
+
     renderItem = ({ item }) => {
         console.log(item);
         return (
             <ListItem
-                leftIcon={{ style: { marginRight: 10 }, name: "zoom-out-map" }}
-                title={<View style={{flexDirection: 'row', alignItems: 'center'}}>{!!item.favorite && <Icon size={14} style={{marginRight: 5}} name="star" color="#2089dc" />}<Text>{item.title}</Text></View>}
+                leftIcon={{ style: { marginRight: 10 }, name: "zoom-out-map", size: 50 }}
+                title={<View style={{ flexDirection: 'row', alignItems: 'center' }}>{!!item.favorite && <Icon size={14} style={{ marginRight: 5 }} name="star" color="#2089dc" />}<Text numberOfLines={1} h4>{item.title}</Text></View>}
                 subtitle={item.short_description}
                 rightTitle={this.getDistance(item.distance)}
+                onPress={() => this.onItemPress(item.id)}
             />
         )
     }
@@ -49,14 +58,21 @@ class Home extends Component {
                     onChangeText={this.onChangeFilterQuery}
                     onClearText={() => onFilterList()}
                     placeholder='Search...' />
-                <List containerStyle={{flexGrow: 1, paddingBottom: 60}}>
-                    <FlatList
-                        contentContainerStyle={{ flexGrow: 1 }}
-                        data={list}
-                        renderItem={this.renderItem}
-                        keyExtractor={item => item.id}
-                    />
-                </List>
+
+                {!!list && !!list.length ? (
+                    <List containerStyle={{ flexGrow: 1, paddingBottom: 60 }}>
+                        <FlatList
+                            contentContainerStyle={{ flexGrow: 1 }}
+                            data={list}
+                            renderItem={this.renderItem}
+                            keyExtractor={item => item.id}
+                        />
+                    </List>
+                ) : (
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                            <Text>Nothing to display...</Text>
+                        </View>
+                    )}
             </View>
         )
     }

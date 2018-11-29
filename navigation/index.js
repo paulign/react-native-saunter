@@ -5,6 +5,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Header } from 'react-native-elements';
 import Home from "../screens/Home";
 import AddPath from "../screens/AddPath";
+import PathDetails from "../screens/PathDetails";
 
 const RootStack = createStackNavigator(
     {
@@ -30,6 +31,16 @@ const RootStack = createStackNavigator(
                 />
             })
         },
+        PathDetails: {
+            screen: PathDetails,
+            navigationOptions: (navigation) => ({
+                header: <Header
+                    leftComponent={{ icon: 'chevron-left', component: TouchableOpacity, color: '#fff', onPress: () => navigation.navigation.goBack() }}
+                    centerComponent={{ text: 'Path details', style: { color: '#fff', fontSize: 20 } }}
+                    outerContainerStyles={{ paddingTop: Constants.statusBarHeight }}
+                />
+            })
+        }
     },
     {
         initialRouteName: "Home"
