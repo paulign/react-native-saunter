@@ -6,6 +6,7 @@ import MapElement from "../components/MapElement";
 import { connect } from "react-redux";
 import { toggleFavoriteState, removePath } from "../actions";
 import Loading from "../components/Loading";
+import { colors } from "../colors";
 
 class PathDetails extends Component {
   constructor(props) {
@@ -78,7 +79,7 @@ class PathDetails extends Component {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <MapElement style={styles.mapContainer} markers={selectedPath.path} />
         <View style={styles.titleWrapper}>
-          {!!selectedPath.favorite && <Icon name="star" color="#2089dc" />}
+          {!!selectedPath.favorite && <Icon name="star" color={colors.blue} />}
           <Text h3>{selectedPath.title}</Text>
         </View>
         <Text>{selectedPath.full_description}</Text>
@@ -87,10 +88,10 @@ class PathDetails extends Component {
           <Text>{this.getDistance()}</Text>
         </View>
         <TouchableOpacity activeOpacity={0.8} onPress={this.onRemove}>
-          <Text style={{ color: "#bd2130", marginBottom: 10 }}>Remove</Text>
+          <Text style={{ color: colors.red, marginBottom: 10 }}>Remove</Text>
         </TouchableOpacity>
         <TouchableOpacity activeOpacity={0.8} onPress={this.onToggleFavorite}>
-          <Text style={{ color: "#2089dc" }}>
+          <Text style={{ color: colors.blue }}>
             {!selectedPath.favorite
               ? "Add to favorites"
               : "Remove from favorites"}
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
   scrollContainer: { flexGrow: 1, padding: 15, paddingTop: 0 },
   mapContainer: {
     height: 300,
-    backgroundColor: "#ccc",
+    backgroundColor: colors.grey,
     marginHorizontal: -15,
     marginBottom: 10
   },

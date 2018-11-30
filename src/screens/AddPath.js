@@ -14,6 +14,7 @@ import { addMapMarker, createNewPath } from "../actions";
 import geolib from "geolib";
 import MapElement from "../components/MapElement";
 import Loading from "../components/Loading";
+import { colors } from "../colors";
 
 class AddPath extends Component {
   constructor(props) {
@@ -192,7 +193,7 @@ class AddPath extends Component {
           disabled={!this.props.valid || !this.props.path.length}
           containerViewStyle={{ marginTop: 20 }}
           title="Submit"
-          backgroundColor="#2089dc"
+          backgroundColor={colors.blue}
           onPress={this.onSubmit}
         />
       </View>
@@ -219,7 +220,7 @@ class AddPath extends Component {
               containerViewStyle={{ backgroundColor: "transparent" }}
               raised
               rounded
-              backgroundColor="#2089dc"
+              backgroundColor={colors.blue}
               title="Add marker"
             />
           </View>
@@ -274,22 +275,22 @@ const styles = StyleSheet.create({
     marginHorizontal: 15
   },
   inputStyle: {
-    color: "#4d4d4d",
+    color: colors.darkGrey,
     maxHeight: 100,
     minHeight: 35,
     borderBottomWidth: 2,
     paddingBottom: 5,
-    borderColor: "#cccccc"
+    borderColor: colors.grey
   },
   inputActive: {
-    borderColor: "#2089dc"
+    borderColor: colors.blue
   },
   inputContainer: {
     justifyContent: "flex-start"
   },
   inputLimit: {
     marginTop: 5,
-    color: "#4d4d4d",
+    color: colors.darkGrey,
     fontSize: 12,
     paddingHorizontal: 15,
     textAlign: "right"
@@ -297,11 +298,11 @@ const styles = StyleSheet.create({
   mapHelp: {
     paddingVertical: 5,
     paddingHorizontal: 15,
-    color: "#4d4d4d"
+    color: colors.darkGrey
   },
   pathDistance: {
     textAlign: "center",
-    color: "#4d4d4d"
+    color: colors.darkGrey
   },
   addMarkerWrapper: {
     backgroundColor: "transparent",

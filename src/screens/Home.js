@@ -3,6 +3,7 @@ import { View, FlatList, StyleSheet } from "react-native";
 import { List, ListItem, SearchBar, Text, Icon } from "react-native-elements";
 import { connect } from "react-redux";
 import { onFilterList } from "../actions";
+import { colors } from "../colors";
 class Home extends Component {
   getDistance = distance => {
     let valueType = distance > 1000 ? "km" : "m";
@@ -50,7 +51,7 @@ class Home extends Component {
                 size={14}
                 style={{ marginRight: 5 }}
                 name="star"
-                color="#2089dc"
+                color={colors.blue}
               />
             )}
             <Text numberOfLines={1} h4>
@@ -71,7 +72,7 @@ class Home extends Component {
     return (
       <View style={{ flex: 1 }}>
         <SearchBar
-          containerStyle={{ backgroundColor: "#fff" }}
+          containerStyle={{ backgroundColor: colors.white }}
           lightTheme
           onChangeText={this.onChangeFilterQuery}
           onClearText={() => onFilterList()}
@@ -79,7 +80,12 @@ class Home extends Component {
         />
 
         {!!list && !!list.length ? (
-          <List containerStyle={styles.listContailer}>
+          <List
+            containerStyle={{
+              flexGrow: 1,
+              paddingBottom: 60
+            }}
+          >
             <FlatList
               contentContainerStyle={{ flexGrow: 1 }}
               data={list}
@@ -113,10 +119,6 @@ const styles = StyleSheet.create({
   pathTitleWrapper: {
     flexDirection: "row",
     alignItems: "center"
-  },
-  listContainer: {
-    flexGrow: 1,
-    paddingBottom: 60
   },
   emptyState: {
     flex: 1,
