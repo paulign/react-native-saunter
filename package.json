@@ -7,8 +7,12 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "eject": "expo eject",
-    "precommit": "pretty-quick --staged",
     "pretty-quick": "pretty-quick"
+  },
+  "husky": {
+    "hooks": {
+      "precommit": "pretty-quick --staged"
+    }
   },
   "dependencies": {
     "expo": "^31.0.2",
